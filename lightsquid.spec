@@ -23,9 +23,7 @@ BuildRequires: dos2unix
 BuildArch: noarch
 
 %description
-%{name} report parser and visualyzer, generate sort of report
-light fast no database required no additional perl modules
-small disk usage template html - you can create you own look;
+%{name} Little and fast squid log analizer.
 
 %prep
 %setup -q -n %{srcname}
@@ -39,8 +37,8 @@ small disk usage template html - you can create you own look;
 %{__sed} -i 's|lightsquid.cfg|%lightsquid_confdir/lightsquid.cfg|' *.cgi *.pl
 %{__sed} -i 's|common.pl|%_datadir/%name/common.pl|' *.cgi *.pl
 %{__sed} -i 's|/etc/squid/users.txt|/etc/lightsquid/users.txt|' ip2name/ip2name.*
-%{__cp} -f %{SOURCE1} %{SOURCE1}%{?dist}
-%{__sed} -i 's|"path to web"|"%{lightdir}"|' %{SOURCE1}%{?dist}
+%{__cp} -f %{SOURCE1} %{SOURCE1}.linux
+%{__sed} -i 's|"path to web"|"%lightdir"|' %{SOURCE1}.linux
 %{__sed} -i 's|"../lightsquid.cfg"|"%lightsquid_confdir/lightsquid.cfg"|' tools/fixreport.pl
 %{__sed} -i 's|"../../lightsquid.cfg"|"%lightsquid_confdir/lightsquid.cfg"|' tools/SiteAggregator/ReportExplorer.pl
 %{__sed} -i 's|"../../lightsquid.cfg"|"%lightsquid_confdir/lightsquid.cfg"|' tools/SiteAggregator/SiteAgregator.pl
@@ -60,11 +58,11 @@ install -m 755 lightparser.pl %{buildroot}%{_sbindir}/
 install -pD -m 644 lightsquid.cfg %{buildroot}%{lightsquid_confdir}/lightsquid.cfg
 install -pD -m 644 group.cfg.src %{buildroot}%{lightsquid_confdir}/group.cfg
 install -pD -m 644 realname.cfg %{buildroot}%{lightsquid_confdir}/realname.cfg
-install -pD -m 644 %{SOURCE1}%{?dist} %{buildroot}%{apache_confdir}/lightsquid.conf
+install -pD -m 644 %{SOURCE1}.linux %{buildroot}%{apache_confdir}/lightsquid.conf
 
 echo "delete me" > %{buildroot}%{lightdir}/report/delete.me
 
-%__cat << EOF > %{buildroot}%{_sysconfdir}/cron.d/lightsquid
+%{__cat} << EOF > %{buildroot}%{_sysconfdir}/cron.d/lightsquid
 55 * * * *     lightsquid /usr/sbin/lightparser.pl today
 EOF
 
@@ -119,7 +117,7 @@ Configure file for apache
 
 %clean
 %{__rm} -rf %{buildroot}
-%{__rm} -rf %{SOURCE1}%{?dist}
+%{__rm} -rf %{SOURCE1}.linux
 
 %changelog
 * Thu Jul 9 2009 Popkov Aleksey <aleksey@psniip.ru> 1.8-1
@@ -127,7 +125,8 @@ Configure file for apache
 - Added patch for fixed some the littles bugs.
 
 * Wed Jun 17 2009 Popkov Aleksey <aleksey@psniip.ru> 1.7.1-1
-- Some removed sed's and added BuildRoot directive
+- Some removed sed's
+- Added BuildRoot directive
 - lightsquid.conf - moved from main package to self package.
 
 * Tue Jun 16 2009 Popkov Aleksey <aleksey@psniip.ru> 1.7.1-1
