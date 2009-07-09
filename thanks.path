@@ -1,0 +1,16 @@
+diff --git a/doc/thanks.txt b/doc/thanks.txt
+index 8551e7b..e64fece 100644
+--- a/doc/thanks.txt
++++ b/doc/thanks.txt
+@@ -1,4 +1,4 @@
+-Pfunk Mallone <pfunkspam__at__lycos.com>	-	documentation spellcheck
++Pfunk Mallone <pfunkspam__at__lycos.com>	-	documentation spellcheck
+ Angel IL 					-	(update hh:mm)
+ George Moury 					-	Idea about PHANTOM user in report ...
+ 
+@@ -12,4 +12,4 @@ George Moury 					-	Idea about PHANTOM user in report ...
+  7	Spanish	Alberto 	Uez fix	
+  8	French			laurent brichet	
+  9	Ukrainian		Mykhailo Predeus 
+-10	Czech			Bøetislav Kubesa
++10	Czech			Betislav Kubesa
