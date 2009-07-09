@@ -48,6 +48,7 @@ dos2unix doc/*
 %install
 install -m 755 -d %{buildroot}{%{_sbindir},%{lightdir}}
 install -m 755 -d %{buildroot}%{_sysconfdir}/cron.d
+install -m 755 -d %{buildroot}%{lightdir}/report
 install -m 755 -d %{buildroot}%{_datadir}/%name/{lang,ip2name,tpl}
 install -m 755 -d %{buildroot}%{_localstatedir}/%{name}
 install -m 755 lightparser.pl %{buildroot}%{_sbindir}/
@@ -55,6 +56,7 @@ install -pD -m 644 lightsquid.cfg %{buildroot}%{lightsquid_confdir}/lightsquid.c
 install -pD -m 644 group.cfg.src %{buildroot}%{lightsquid_confdir}/group.cfg
 install -pD -m 644 realname.cfg %{buildroot}%{lightsquid_confdir}/realname.cfg
 install -pD -m 644 %{SOURCE1} %{buildroot}%{apache_confdir}/lightsquid.conf
+echo "delete me" > %{buildroot}%{lightdir}/report/delete.me
 
 %__cat << EOF > %{buildroot}%{_sysconfdir}/cron.d/lightsquid
 55 * * * *     lightsquid /usr/sbin/lightparser.pl today
@@ -79,8 +81,20 @@ install -p -m 644 ip2name/* %{buildroot}%{_datadir}/%{name}/ip2name/
 %config(noreplace) %{lightsquid_confdir}/group.cfg
 %config(noreplace) %{lightsquid_confdir}/realname.cfg
 %config(noreplace) %{_sysconfdir}/cron.d/lightsquid
+%{lightdir}/report/delete.me
 #%attr(0755,root,root)
 %{lightdir}/*.cgi
+
+%package apache
+Summary: The %{name} Web Control
+Group: Applications/Internet
+Requires: %{name} = %{version}-%{release}
+Requires: httpd
+%description apache
+Configure file for apache
+
+%files apache
+%defattr(-,root,root)
 %config(noreplace) %{apache_confdir}/lightsquid.conf
 
 %pre
@@ -102,7 +116,8 @@ install -p -m 644 ip2name/* %{buildroot}%{_datadir}/%{name}/ip2name/
 - Build version of lightsquid 1.8.
 
 * Wed Jun 17 2009 Popkov Aleksey <aleksey@psniip.ru> 1.7.1-1
-- Some removed sed's and added BuildRoot directive.
+- Some removed sed's and added BuildRoot directive
+- lightsquid.conf - moved from main package to self package.
 
 * Tue Jun 16 2009 Popkov Aleksey <aleksey@psniip.ru> 1.7.1-1
 - Adapted for Fedora Group
