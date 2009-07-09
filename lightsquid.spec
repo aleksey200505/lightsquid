@@ -13,8 +13,10 @@ License: GPLv2
 Group: Applications/Internet
 Url: http://lightsquid.sourceforge.net/
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-Source: http://prdownloads.sourceforge.net/lightsquid/%name-%version.tgz
-
+Source0: http://prdownloads.sourceforge.net/lightsquid/%name-%version.tgz
+Source1: lightsquid.conf
+Patch0: shebang.patch
+Patch1: thanks.path
 Requires: perl-GDGraph3d perl-GD perl-GDGraph
 BuildRequires: sed
 BuildArch: noarch
@@ -26,6 +28,8 @@ small disk usage template html - you can create you own look;
 
 %prep
 %setup -q -n %{srcname}
+%patch0 -p1
+%patch1 -p1 
 
 %{__sed} -i 's|/var/www/html/lightsquid/lang|%{_datadir}/%{name}/lang|' lightsquid.cfg
 %{__sed} -i 's|/var/www/html/lightsquid/tpl|%{_datadir}/%{name}/tpl|' lightsquid.cfg
@@ -38,7 +42,9 @@ small disk usage template html - you can create you own look;
 
 iconv -f WINDOWS-1251 -t UTF8 lang/ru.lng > lang/ru-utf8.lng
 %{__sed} -i 's|windows-1251|utf8|' lang/ru-utf8.lng
-	
+
+dos2unix doc/*
+
 %install
 install -m 755 -d %{buildroot}{%{_sbindir},%{lightdir}}
 install -m 755 -d %{buildroot}%{_sysconfdir}/cron.d
@@ -48,7 +54,7 @@ install -m 755 lightparser.pl %{buildroot}%{_sbindir}/
 install -pD -m 644 lightsquid.cfg %{buildroot}%{lightsquid_confdir}/lightsquid.cfg
 install -pD -m 644 group.cfg.src %{buildroot}%{lightsquid_confdir}/group.cfg
 install -pD -m 644 realname.cfg %{buildroot}%{lightsquid_confdir}/realname.cfg
-#install -pD -m 644 lightsquid.conf %{buildroot}%{apache_confdir}/lightsquid.conf
+install -pD -m 644 %{SOURCE1} %{buildroot}%{apache_confdir}/lightsquid.conf
 
 %__cat << EOF > %{buildroot}%{_sysconfdir}/cron.d/lightsquid
 55 * * * *     lightsquid /usr/sbin/lightparser.pl today
