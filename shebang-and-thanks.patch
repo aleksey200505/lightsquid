@@ -1,3 +1,12 @@
+diff --git a/lightsquid.cfg b/lightsquid.cfg
+index 8057cba..54ca312 100644
+--- a/lightsquid.cfg
++++ b/lightsquid.cfg
+@@ -1,4 +1,3 @@
+-#!/usr/bin/perl
+ #
+ # LightSquid Project (c) 2004-2008 Sergey Erokhin aka ESL
+ #
 diff --git a/doc/thanks.txt b/doc/thanks.txt
 index 8551e7b..e64fece 100644
 --- a/doc/thanks.txt

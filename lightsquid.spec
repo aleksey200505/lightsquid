@@ -4,6 +4,7 @@
 %define lightsquid_confdir %{_sysconfdir}/lightsquid
 %define lightdir %{apache_home}/lightsquid
 %define srcname lightsquid-%{version}
+%define ip2namepath %{_datadir}/%{name}/ip2name
 
 Summary: Lite, small size and fast log analizer for squid proxy
 Name: lightsquid
@@ -15,10 +16,10 @@ Url: http://lightsquid.sourceforge.net/
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Source0: http://prdownloads.sourceforge.net/lightsquid/%name-%version.tgz
 Source1: lightsquid.conf
-Patch0: shebang.patch
-Patch1: thanks.path
+Patch0: shebang-and-thanks.patch
 Requires: perl-GDGraph3d perl-GD perl-GDGraph
 BuildRequires: sed
+BuildRequires: dos2unix
 BuildArch: noarch
 
 %description
@@ -29,17 +30,20 @@ small disk usage template html - you can create you own look;
 %prep
 %setup -q -n %{srcname}
 %patch0 -p1
-%patch1 -p1 
 
 %{__sed} -i 's|/var/www/html/lightsquid/lang|%{_datadir}/%{name}/lang|' lightsquid.cfg
 %{__sed} -i 's|/var/www/html/lightsquid/tpl|%{_datadir}/%{name}/tpl|' lightsquid.cfg
 %{__sed} -i 's|/var/www/html/lightsquid/ip2name|%{_datadir}/%{name}/ip2name|' lightsquid.cfg
 %{__sed} -i 's|\$cfgpath             =\"/var/www/html/lightsquid|\$cfgpath             =\"%lightsquid_confdir|' lightsquid.cfg
-%{__sed} -i 's|require "ip2name|require "$ip2namepath|' lightparser.pl
+%{__sed} -i 's|require "ip2name|require "%ip2namepath|' lightparser.pl
 %{__sed} -i 's|lightsquid.cfg|%lightsquid_confdir/lightsquid.cfg|' *.cgi *.pl
 %{__sed} -i 's|common.pl|%_datadir/%name/common.pl|' *.cgi *.pl
 %{__sed} -i 's|/etc/squid/users.txt|/etc/lightsquid/users.txt|' ip2name/ip2name.*
-
+%{__cp} -f %{SOURCE1} %{SOURCE1}%{?dist}
+%{__sed} -i 's|"path to web"|"%{lightdir}"|' %{SOURCE1}%{?dist}
+%{__sed} -i 's|"../lightsquid.cfg"|"%lightsquid_confdir/lightsquid.cfg"|' tools/fixreport.pl
+%{__sed} -i 's|"../../lightsquid.cfg"|"%lightsquid_confdir/lightsquid.cfg"|' tools/SiteAggregator/ReportExplorer.pl
+%{__sed} -i 's|"../../lightsquid.cfg"|"%lightsquid_confdir/lightsquid.cfg"|' tools/SiteAggregator/SiteAgregator.pl
 iconv -f WINDOWS-1251 -t UTF8 lang/ru.lng > lang/ru-utf8.lng
 %{__sed} -i 's|windows-1251|utf8|' lang/ru-utf8.lng
 
@@ -49,13 +53,15 @@ dos2unix doc/*
 install -m 755 -d %{buildroot}{%{_sbindir},%{lightdir}}
 install -m 755 -d %{buildroot}%{_sysconfdir}/cron.d
 install -m 755 -d %{buildroot}%{lightdir}/report
-install -m 755 -d %{buildroot}%{_datadir}/%name/{lang,ip2name,tpl}
+install -m 755 -d %{buildroot}%{_datadir}/%{name}/{tools,lang,ip2name,tpl}
+install -m 755 -d %{buildroot}%{_datadir}/%{name}/tools/SiteAggregator
 install -m 755 -d %{buildroot}%{_localstatedir}/%{name}
 install -m 755 lightparser.pl %{buildroot}%{_sbindir}/
 install -pD -m 644 lightsquid.cfg %{buildroot}%{lightsquid_confdir}/lightsquid.cfg
 install -pD -m 644 group.cfg.src %{buildroot}%{lightsquid_confdir}/group.cfg
 install -pD -m 644 realname.cfg %{buildroot}%{lightsquid_confdir}/realname.cfg
-install -pD -m 644 %{SOURCE1} %{buildroot}%{apache_confdir}/lightsquid.conf
+install -pD -m 644 %{SOURCE1}%{?dist} %{buildroot}%{apache_confdir}/lightsquid.conf
+
 echo "delete me" > %{buildroot}%{lightdir}/report/delete.me
 
 %__cat << EOF > %{buildroot}%{_sysconfdir}/cron.d/lightsquid
@@ -69,9 +75,12 @@ install -p -m 644 lang/check_tpl_lng.pl %{buildroot}%{_datadir}/%{name}/
 install -p -m 755 lang/check_lng.pl %{buildroot}%{_datadir}/%{name}/
 install -p -m 644 lang/*.lng %{buildroot}%{_datadir}/%{name}/lang/
 install -p -m 644 ip2name/* %{buildroot}%{_datadir}/%{name}/ip2name/
-%__cp -aRf tpl/* %{buildroot}%{_datadir}/%{name}/tpl/
+install -p -m 755 tools/*.pl %{buildroot}%{_datadir}/%{name}/tools/
+install -p -m 755 tools/SiteAggregator/* %{buildroot}%{_datadir}/%{name}/tools/SiteAggregator/
 
-%__install -p -m 755 [^A-Z]*.cgi %{buildroot}%{apache_home}/%{name}/
+%{__cp} -aRf tpl/* %{buildroot}%{_datadir}/%{name}/tpl/
+
+install -p -m 755 [^A-Z]*.cgi %{buildroot}%{apache_home}/%{name}/
 
 %files
 %doc doc/*
@@ -110,10 +119,12 @@ Configure file for apache
 
 %clean
 %{__rm} -rf %{buildroot}
+%{__rm} -rf %{SOURCE1}%{?dist}
 
 %changelog
 * Thu Jul 9 2009 Popkov Aleksey <aleksey@psniip.ru> 1.8-1
-- Build version of lightsquid 1.8.
+- Build version lightsquid 1.8
+- Added patch for fixed some the littles bugs.
 
 * Wed Jun 17 2009 Popkov Aleksey <aleksey@psniip.ru> 1.7.1-1
 - Some removed sed's and added BuildRoot directive
