@@ -12,4 +12,4 @@ George Moury 					-	Idea about PHANTOM user in report ...
  7	Spanish	Alberto 	Uez fix	
  8	French			laurent brichet	
  9	Ukrainian		Mykhailo Predeus 
-10	Czech			Bøetislav Kubesa
+10	Czech			Betislav Kubesa
