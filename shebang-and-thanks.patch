@@ -17,3 +17,13 @@ index 8551e7b..e64fece 100644
   9	Ukrainian		Mykhailo Predeus 
 -10	Czech			Bøetislav Kubesa
 +10	Czech			Betislav Kubesa
+diff --git a/tools/fixreport.pl b/tools/fixreport.pl
+index 8e62b32..9d01469 100755
+--- a/tools/fixreport.pl
++++ b/tools/fixreport.pl
+@@ -1,4 +1,4 @@
+-#!/bin/perl
++#/bin/perl
+ $|=1;
+ 
+ require "../lightsquid.cfg";
