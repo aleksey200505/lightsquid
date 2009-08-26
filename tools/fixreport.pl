@@ -1,4 +1,4 @@
-#/bin/perl
+#!/bin/perl
 $|=1;
 
 require "../lightsquid.cfg";
