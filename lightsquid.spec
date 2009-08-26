@@ -81,7 +81,12 @@ install -p -m 755 tools/SiteAggregator/* %{buildroot}%{_datadir}/%{name}/tools/S
 
 install -p -m 755 [^A-Z]*.cgi %{buildroot}%{apache_home}/%{name}/
 
+%clean
+%{__rm} -rf %{buildroot}
+%{__rm} -rf %{SOURCE1}.linux
+
 %files
+%defattr(-,root,root,-)
 %doc doc/*
 %_sbindir/*
 %_datadir/%name
@@ -90,9 +95,8 @@ install -p -m 755 [^A-Z]*.cgi %{buildroot}%{apache_home}/%{name}/
 %config(noreplace) %{lightsquid_confdir}/realname.cfg
 %config(noreplace) %{_sysconfdir}/cron.d/lightsquid
 %{lightdir}/report/delete.me
-#%attr(0755,root,root)
 %{lightdir}/*.cgi
-%defattr(-,root,root,-)
+
 
 %package apache
 Summary: The %{name} Web Control
@@ -117,11 +121,11 @@ Configure file for apache
 #fi
 #find %_localstatedir/%name -print0 | xargs -r0 chown %name:%name
 
-%clean
-%{__rm} -rf %{buildroot}
-%{__rm} -rf %{SOURCE1}.linux
-
 %changelog
+* Thu Aug 26 2009 Popkov Aleksey <aleksey@psniip.ru> 1.8-2
+- Added patch for fixed some the littles bugs
+- Fix errors founded of rpmlint.
+
 * Thu Jul 9 2009 Popkov Aleksey <aleksey@psniip.ru> 1.8-1
 - Build version lightsquid 1.8
 - Added patch for fixed some the littles bugs.
