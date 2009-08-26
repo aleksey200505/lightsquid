@@ -49,6 +49,7 @@ iconv -f WINDOWS-1251 -t UTF8 lang/ru.lng > lang/ru-utf8.lng
 %{__sed} -i 's/\r//' doc/*
 
 %install
+%{__rm} -rf %{buildroot}
 install -m 755 -d %{buildroot}{%{_sbindir},%{lightdir}}
 install -m 755 -d %{buildroot}%{_sysconfdir}/cron.d
 install -m 755 -d %{buildroot}%{lightdir}/report
@@ -84,6 +85,8 @@ install -p -m 755 [^A-Z]*.cgi %{buildroot}%{apache_home}/%{name}/
 %clean
 %{__rm} -rf %{buildroot}
 %{__rm} -rf %{SOURCE1}.linux
+
+%build
 
 %files
 %defattr(-,root,root,-)
