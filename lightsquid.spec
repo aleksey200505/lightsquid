@@ -19,7 +19,7 @@ Source1: lightsquid.conf
 Patch0: shebang-and-thanks.patch
 Requires: perl-GDGraph3d perl-GD perl-GDGraph
 BuildRequires: sed
-BuildRequires: dos2unix
+#BuildRequires: dos2unix
 BuildArch: noarch
 
 %description
@@ -45,7 +45,8 @@ BuildArch: noarch
 iconv -f WINDOWS-1251 -t UTF8 lang/ru.lng > lang/ru-utf8.lng
 %{__sed} -i 's|windows-1251|utf8|' lang/ru-utf8.lng
 
-dos2unix doc/*
+#dos2unix doc/*
+%{__sed} -i 's/\r//' doc/*
 
 %install
 install -m 755 -d %{buildroot}{%{_sbindir},%{lightdir}}
@@ -91,6 +92,7 @@ install -p -m 755 [^A-Z]*.cgi %{buildroot}%{apache_home}/%{name}/
 %{lightdir}/report/delete.me
 #%attr(0755,root,root)
 %{lightdir}/*.cgi
+%defattr(-,root,root,-)
 
 %package apache
 Summary: The %{name} Web Control
