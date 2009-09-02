@@ -19,7 +19,7 @@ Source1: lightsquid.conf
 Patch0: shebang-and-thanks.patch
 Requires: perl-GDGraph3d perl-GD perl-GDGraph
 BuildRequires: sed
-#BuildRequires: dos2unix
+BuildRequires: dos2unix
 BuildArch: noarch
 
 %description
@@ -45,11 +45,9 @@ BuildArch: noarch
 iconv -f WINDOWS-1251 -t UTF8 lang/ru.lng > lang/ru-utf8.lng
 %{__sed} -i 's|windows-1251|utf8|' lang/ru-utf8.lng
 
-#dos2unix doc/*
-%{__sed} -i 's/\r//' doc/*
+dos2unix doc/*
 
 %install
-%{__rm} -rf %{buildroot}
 install -m 755 -d %{buildroot}{%{_sbindir},%{lightdir}}
 install -m 755 -d %{buildroot}%{_sysconfdir}/cron.d
 install -m 755 -d %{buildroot}%{lightdir}/report
@@ -82,14 +80,7 @@ install -p -m 755 tools/SiteAggregator/* %{buildroot}%{_datadir}/%{name}/tools/S
 
 install -p -m 755 [^A-Z]*.cgi %{buildroot}%{apache_home}/%{name}/
 
-%clean
-%{__rm} -rf %{buildroot}
-%{__rm} -rf %{SOURCE1}.linux
-
-%build
-
 %files
-%defattr(-,root,root,-)
 %doc doc/*
 %_sbindir/*
 %_datadir/%name
@@ -98,8 +89,8 @@ install -p -m 755 [^A-Z]*.cgi %{buildroot}%{apache_home}/%{name}/
 %config(noreplace) %{lightsquid_confdir}/realname.cfg
 %config(noreplace) %{_sysconfdir}/cron.d/lightsquid
 %{lightdir}/report/delete.me
+#%attr(0755,root,root)
 %{lightdir}/*.cgi
-
 
 %package apache
 Summary: The %{name} Web Control
@@ -124,11 +115,11 @@ Configure file for apache
 #fi
 #find %_localstatedir/%name -print0 | xargs -r0 chown %name:%name
 
-%changelog
-* Thu Aug 26 2009 Popkov Aleksey <aleksey@psniip.ru> 1.8-2
-- Added patch for fixed some the littles bugs
-- Fix errors founded of rpmlint.
+%clean
+%{__rm} -rf %{buildroot}
+%{__rm} -rf %{SOURCE1}.linux
 
+%changelog
 * Thu Jul 9 2009 Popkov Aleksey <aleksey@psniip.ru> 1.8-1
 - Build version lightsquid 1.8
 - Added patch for fixed some the littles bugs.
